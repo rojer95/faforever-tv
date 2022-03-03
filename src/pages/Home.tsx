@@ -19,6 +19,7 @@ import {getCriteria} from '../api';
 import Twitch from '../components/Twitch';
 import {usePlayer} from '../hooks/useStores';
 import {observer} from 'mobx-react';
+import {useGlobal} from '../hooks/useGlobal';
 
 const Header = styled.View`
   margin: 15px 0px;
@@ -57,7 +58,7 @@ export default observer(() => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {current, playerState} = usePlayer();
   const [refreshing, setRefreshing] = useState(false);
-
+  const {setCruteria: setGlobalCruteria} = useGlobal();
   const [cruteria, setCruteria] = useState([]);
 
   useTVEventHandler(e => {
@@ -78,6 +79,7 @@ export default observer(() => {
     try {
       const {data: criteriaData} = await getCriteria();
       setCruteria(criteriaData);
+      setGlobalCruteria(criteriaData);
       setRefreshing(false);
     } catch (error: any) {
       ToastAndroid.showWithGravity(

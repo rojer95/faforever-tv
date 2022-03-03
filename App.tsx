@@ -34,6 +34,8 @@ const App = () => {
   const [pageLastFocus, setPageLastFocus] = useState<Record<string, string>>(
     {},
   );
+
+  const [cruteria, setCruteria] = useState<any[]>([]);
   useKeepAwake();
 
   const loadSongs = async () => {
@@ -48,6 +50,8 @@ const App = () => {
   return (
     <GlobalContext.Provider
       value={{
+        cruteria,
+        setCruteria,
         songs,
         page: currentPage,
         setPage: setCurrentPage,

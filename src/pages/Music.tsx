@@ -13,6 +13,7 @@ import Button from '../components/Button';
 import {getPicUrl} from '../api';
 import {usePlayer} from '../hooks/useStores';
 import {observer} from 'mobx-react';
+import {useGlobal} from '../hooks/useGlobal';
 
 const LrcBox = styled.View<{height: number; width: number}>`
   height: ${props => `${props.height}px`};
@@ -101,6 +102,8 @@ const Music = observer(() => {
   const slideing = React.useRef<boolean>(false);
   const {height, w1, w5, w3} = useWidth();
   const [liked, setLiked] = React.useState(false);
+  const [uri, setUri] = useState<string>('');
+  const {cruteria} = useGlobal();
 
   const toggleLoop = () => {
     const next: any = {
@@ -110,6 +113,16 @@ const Music = observer(() => {
     };
     setLoop?.(next[loop ?? 'list']);
   };
+
+  useEffect(() => {
+    // 随机封面，避免一直是用一个背景
+    if (cruteria) {
+      const index = Math.floor(Math.random() * cruteria?.length);
+      setUri(
+        getPicUrl(cruteria?.[index]?.name, cruteria?.[index]?.album_artist),
+      );
+    }
+  }, [current]);
 
   const slideTime = debounce((time: number) => {
     seekTo(parseInt(`${time}`, 0));
@@ -125,10 +138,7 @@ const Music = observer(() => {
         {current?.additional ? (
           <ImageBackground
             source={{
-              uri: getPicUrl(
-                current?.additional?.song_tag?.album,
-                current?.additional?.song_tag?.album_artist,
-              ),
+              uri,
             }}
             blurRadius={18}
             style={{

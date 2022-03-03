@@ -6,6 +6,8 @@ type GlobalContextType = {
   songs?: Record<string, any>;
   pageLastFocus?: Record<string, string>;
   setPageLastFocus?: (page: string, uuid: string) => void;
+  cruteria?: any[];
+  setCruteria?: any;
 };
 
 const GlobalContext = React.createContext<GlobalContextType>({});
