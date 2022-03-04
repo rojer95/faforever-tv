@@ -3,7 +3,7 @@ import {Lrc} from '@rojer/react-native-lrc';
 import {ImageBackground, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import styled from 'styled-components/native';
-import debounce from 'lodash.debounce';
+import {useDebouncedCallback} from 'use-debounce';
 import useWidth from '../hooks/useWidth';
 import {Container, Flex, Page} from '../components/Layout';
 import Text from '../components/Text';
@@ -38,9 +38,22 @@ const loops: any = {
   signal: require('../assets/icon_loop_signal.png'),
 };
 
-const SliderBar = observer(({onValueChange}: {onValueChange: any}) => {
+const SliderBar = observer(({seekTo}: {seekTo: any}) => {
   const {w1} = useWidth();
   const {progress} = usePlayer();
+  const [currentTime, setCurrentTime] = useState(0);
+  const slideing = React.useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!slideing.current) setCurrentTime(progress?.currentTime);
+  }, [progress?.currentTime]);
+
+  const slideTime = useDebouncedCallback((time: number) => {
+    seekTo(parseInt(`${time}`, 0));
+    setTimeout(() => {
+      slideing.current = false;
+    }, 1000);
+  }, 1500);
 
   return (
     <Slider
@@ -50,8 +63,11 @@ const SliderBar = observer(({onValueChange}: {onValueChange: any}) => {
       thumbTintColor="#FFFFFF"
       minimumTrackTintColor="#FFFFFF"
       maximumTrackTintColor="#FFFFFF"
-      value={progress?.currentTime}
-      onValueChange={onValueChange}
+      value={currentTime}
+      onValueChange={(time: any) => {
+        slideing.current = true;
+        slideTime(time);
+      }}
     />
   );
 });
@@ -99,7 +115,6 @@ const Music = observer(() => {
   } = usePlayer();
 
   // const {likelist, likeMusic} = useGlobal();
-  const slideing = React.useRef<boolean>(false);
   const {height, w1, w5, w3} = useWidth();
   const [liked, setLiked] = React.useState(false);
   const [uri, setUri] = useState<string>('');
@@ -123,11 +138,6 @@ const Music = observer(() => {
       );
     }
   }, [current]);
-
-  const slideTime = debounce((time: number) => {
-    seekTo(parseInt(`${time}`, 0));
-    slideing.current = false;
-  }, 1000);
 
   return (
     <Page pageId="Music">
@@ -198,12 +208,7 @@ const Music = observer(() => {
           </Flex>
 
           <Container>
-            <SliderBar
-              onValueChange={(time: any) => {
-                slideing.current = true;
-                slideTime(time);
-              }}
-            />
+            <SliderBar seekTo={seekTo} />
           </Container>
 
           <ControlerBox justify="center" align="center" direction="column">
