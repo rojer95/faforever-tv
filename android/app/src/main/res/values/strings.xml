@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FaForeverTv</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">61qaLLUMSupB9LN_4Obykm3WUXjmD9pOLlkbf</string>
 </resources>

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import codePush from 'react-native-code-push';
 import Home from './src/pages/Home';
 import List from './src/pages/List';
 import Twitch from './src/pages/Twitch';
@@ -102,4 +103,6 @@ const App = () => {
   );
 };
 
-export default App;
+export default codePush({
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+})(App);
