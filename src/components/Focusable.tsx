@@ -31,6 +31,7 @@ const TouchableOpacityContainer = styled(TouchableOpacity)<{
       : '0px 0px 0px rgba(0, 0, 0, 0)'};
   background: ${props =>
     props.focused && props.width === 0 ? 'rgba(0, 0, 0, 0.4)' : 'transparent'};
+  opacity: ${props => (props.disabled ? 0.4 : 1)};
 `;
 
 interface Props {
@@ -41,6 +42,7 @@ interface Props {
   radius?: number;
   style?: any;
   ani?: boolean;
+  disabled?: boolean;
   shadow?: boolean;
   hasTVPreferredFocus?: boolean;
   isTVSelectable?: boolean;
@@ -60,13 +62,14 @@ class FocusableHighlight extends React.Component<Props> {
       style,
       hasTVPreferredFocus = false,
       isTVSelectable = true,
+      disabled = false,
       ...props
     } = this.props;
 
     return (
       <TouchableOpacityContainer
         activeOpacity={0.8}
-        accessible={isTVSelectable}
+        accessible={disabled ? false : isTVSelectable}
         hasTVPreferredFocus={hasTVPreferredFocus}
         radius={radius}
         width={width}
@@ -75,6 +78,7 @@ class FocusableHighlight extends React.Component<Props> {
         ani={ani}
         onPress={(event: GestureResponderEvent) => {
           if (props.onPress && event.preventDefault) {
+            if (disabled) return;
             props.onPress(event);
           }
         }}

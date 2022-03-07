@@ -18,12 +18,8 @@ import Text from '../components/Text';
 import Musicing from '../components/Musicing';
 import {useGlobal} from '../hooks/useGlobal';
 import {getPicUrl} from '../api';
-import {usePlayer} from '../hooks/useStores';
+import {useLike, usePlayer} from '../hooks/useStores';
 import {observer} from 'mobx-react';
-
-interface Props {
-  detail: any;
-}
 
 const Container = styled.View`
   height: 100%;
@@ -146,6 +142,7 @@ const Item = observer(({item, onPress, width, index}: ItemProps) => {
 const List = observer(() => {
   const {w2} = useWidth();
   const {playList} = usePlayer();
+  const like = useLike();
 
   const changeFunc = (r1: any, r2: any) => r1.id !== r2.id;
   const [list, setList] = useState<any>(
@@ -159,31 +156,38 @@ const List = observer(() => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {songs} = useGlobal();
 
-  const route = useRoute<RouteProp<{detail: any}>>();
+  const route = useRoute<RouteProp<RootStackParamList>>();
   const {params} = route;
 
   useEffect(() => {
-    if (params?.detail) {
-      setTitle();
-      load();
-    }
-  }, [params?.detail]);
+    setTitle();
+    load();
+  }, [params]);
 
   const setTitle = () => {
     navigation.setOptions({
-      title: params?.detail?.name,
+      title: params?.title,
     });
   };
 
-  const load = () => {
-    if (songs && params?.detail?.name in songs) {
-      const dataProvider = new DataProvider(changeFunc).cloneWithRows(
-        songs[params?.detail?.name],
-      );
-      setList(dataProvider);
-      setLayoutProvider(new LayoutProvider(dataProvider));
-      setLoaded(true);
+  const getOriginList = () => {
+    if (params?.key === '__like__') {
+      return like.list;
     }
+
+    if (songs && params?.key in songs) {
+      return songs[params?.key];
+    }
+
+    return [];
+  };
+  const load = () => {
+    const dataProvider = new DataProvider(changeFunc).cloneWithRows(
+      getOriginList(),
+    );
+    setList(dataProvider);
+    setLayoutProvider(new LayoutProvider(dataProvider));
+    setLoaded(true);
   };
 
   const renderItem = (index: any, item: any) => {
@@ -199,7 +203,7 @@ const List = observer(() => {
             '不了',
           );
           if (ok) {
-            playList?.(item, songs?.[params?.detail?.name] ?? []);
+            playList?.(item, getOriginList());
             navigation.navigate('Music');
           } else {
             return false;
@@ -222,7 +226,7 @@ const List = observer(() => {
           renderFooter={() => (
             <Empty align="center" justify="center">
               <Text color="rgba(255,255,255,0.6)">
-                {!loaded ? '加载中...' : '没有更多歌曲了~'}
+                {!loaded ? '加载中...' : ''}
               </Text>
             </Empty>
           )}

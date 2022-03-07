@@ -19,6 +19,46 @@ export const getSongs = () => {
     baseURL: API,
   });
 };
+
+export const getLrc = (title: string) => {
+  return axios.get('/lrc', {
+    baseURL: API,
+    params: {
+      title,
+    },
+  });
+};
+
+export const getLike = (uid: string) => {
+  return axios.get('/like', {
+    baseURL: API,
+    headers: {
+      useruuid: uid,
+    },
+  });
+};
+
+export const like = (path: string, uid: string) => {
+  return axios.post(
+    '/like',
+    {
+      path,
+    },
+    {
+      baseURL: API,
+      headers: {
+        useruuid: uid,
+      },
+    },
+  );
+};
+
+export const getRandom = () => {
+  return axios.get('/random', {
+    baseURL: API,
+  });
+};
+
 export const getPicUrl = (album_name: string, album_artist_name: string) => {
   return `http://magict.cn:5000/webapi/AudioStation/cover.cgi?api=SYNO.AudioStation.Cover&version=3&method=getcover&album_name=${album_name}&album_artist_name=${album_artist_name}&library=all&_sid=${global.sid}`;
 };

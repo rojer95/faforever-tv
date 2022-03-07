@@ -12,7 +12,7 @@ import GlobalContext from './src/contexts/global';
 import BackButton from './src/components/BackButton';
 import {getSongs} from './src/api';
 import GlobalPlayer from './src/components/GlobalPlayer';
-import {PlayerProvider} from './src/contexts/player';
+import {useLike} from './src/hooks/useStores';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -39,6 +39,8 @@ const App = () => {
   const [cruteria, setCruteria] = useState<any[]>([]);
   useKeepAwake();
 
+  const like = useLike();
+
   const loadSongs = async () => {
     const {data} = await getSongs();
     setSongs(data);
@@ -46,6 +48,7 @@ const App = () => {
 
   useEffect(() => {
     loadSongs();
+    like.init();
   }, []);
 
   return (
@@ -64,41 +67,39 @@ const App = () => {
           });
         },
       }}>
-      <PlayerProvider>
-        <GlobalPlayer />
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Home"
-              component={Home}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <Stack.Screen
-              name="List"
-              component={List}
-              options={optionGeter('歌曲列表')}
-            />
+      <GlobalPlayer />
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="List"
+            component={List}
+            options={optionGeter('歌曲列表')}
+          />
 
-            <Stack.Screen
-              name="Music"
-              component={Music}
-              options={{
-                headerShown: false,
-              }}
-            />
+          <Stack.Screen
+            name="Music"
+            component={Music}
+            options={{
+              headerShown: false,
+            }}
+          />
 
-            <Stack.Screen
-              name="Twitch"
-              component={Twitch}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PlayerProvider>
+          <Stack.Screen
+            name="Twitch"
+            component={Twitch}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </GlobalContext.Provider>
   );
 };

@@ -45,10 +45,12 @@ export const RecommendItem: React.FC<{
         marginBottom: space,
       }}
       onPress={() => {
+        if (!detail?.name) return;
         navigation.navigate({
           name: 'List',
           params: {
-            detail,
+            title: detail.name,
+            key: detail.name,
           },
         });
       }}

@@ -11,7 +11,7 @@ import Poster from '../components/Poster';
 import Focusable from '../components/Focusable';
 import Button from '../components/Button';
 import {getPicUrl} from '../api';
-import {usePlayer} from '../hooks/useStores';
+import {useLike, usePlayer} from '../hooks/useStores';
 import {observer} from 'mobx-react';
 import {useGlobal} from '../hooks/useGlobal';
 
@@ -112,13 +112,14 @@ const Music = observer(() => {
     playNext,
     playPre,
     seekTo,
+    isGlobalRandom,
   } = usePlayer();
 
-  // const {likelist, likeMusic} = useGlobal();
-  const {height, w1, w5, w3} = useWidth();
+  const {height, w3} = useWidth();
   const [liked, setLiked] = React.useState(false);
   const [uri, setUri] = useState<string>('');
   const {cruteria} = useGlobal();
+  const like = useLike();
 
   const toggleLoop = () => {
     const next: any = {
@@ -139,13 +140,17 @@ const Music = observer(() => {
     }
   }, [current]);
 
+  useEffect(() => {
+    setLiked(!!like.list?.find((i: any) => i.id === current?.id));
+  }, [current, like.list]);
+
   return (
     <Page pageId="Music">
       <View
         style={{
           position: 'relative',
         }}>
-        {current?.additional ? (
+        {uri ? (
           <ImageBackground
             source={{
               uri,
@@ -217,6 +222,7 @@ const Music = observer(() => {
               <Focusable
                 shadow={false}
                 radius={40}
+                disabled={isGlobalRandom}
                 onPress={toggleLoop}
                 style={{marginRight: 24}}>
                 <Button height={40} width={40} radius={40}>
@@ -312,11 +318,11 @@ const Music = observer(() => {
               </Focusable>
 
               {/* 喜欢 */}
-              {/* <Focusable
+              <Focusable
                 shadow={false}
                 radius={40}
                 onPress={() => {
-                  // likeMusic(current?.id, !liked);
+                  like.like(current?.path);
                 }}
                 style={{marginLeft: 24}}>
                 <Button height={40} width={40} radius={40}>
@@ -329,7 +335,7 @@ const Music = observer(() => {
                     resizeMode="contain"
                   />
                 </Button>
-              </Focusable> */}
+              </Focusable>
             </Flex>
           </ControlerBox>
         </Flex>

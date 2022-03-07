@@ -1,10 +1,14 @@
 import {makeAutoObservable} from 'mobx';
+import {getRandom} from '../api';
+type Song = {
+  [key: string]: any;
+};
 
 class PlayerStore {
   player: any;
   paused: boolean = false;
-  current: any = null;
-  currentList: any[] = [];
+  current?: Song = undefined;
+  currentList: Song[] = [];
   playerState: 'playing' | 'stoped' = 'stoped';
   loop: 'list' | 'signal' | 'random' = 'list';
   lyric: string = '';
@@ -12,12 +16,31 @@ class PlayerStore {
     currentTime: 0,
     seekableDuration: 0,
   };
+  isGlobalRandom: boolean = false;
+  random?: Song = undefined;
 
   constructor() {
     makeAutoObservable(this, {}, {autoBind: true});
   }
 
-  playNext() {
+  startGlobalRandom() {
+    this.isGlobalRandom = true;
+    this.current = this.random;
+  }
+
+  *loadRandom() {
+    const {data} = yield getRandom();
+    this.random = data;
+    return data;
+  }
+
+  *playNext() {
+    if (this.isGlobalRandom) {
+      const song: Song = yield this.loadRandom();
+      this.current = song;
+      return;
+    }
+
     if (this.loop === 'signal') {
       return;
     }
@@ -31,7 +54,7 @@ class PlayerStore {
     }
 
     let index = this.currentList.findIndex(value => {
-      if (value.id === this.current.id) {
+      if (value.id === this.current?.id) {
         return true;
       }
       return false;
@@ -43,7 +66,12 @@ class PlayerStore {
     this.current = song;
   }
 
-  playPre() {
+  *playPre() {
+    if (this.isGlobalRandom) {
+      const song: Song = yield this.loadRandom();
+      this.current = song;
+      return;
+    }
     if (this.loop === 'signal') {
       return;
     }
@@ -57,7 +85,7 @@ class PlayerStore {
     }
 
     let index = this.currentList.findIndex(value => {
-      if (value.id === this.current.id) {
+      if (value.id === this.current?.id) {
         return true;
       }
       return false;
@@ -84,6 +112,7 @@ class PlayerStore {
   }
 
   playList(music: any, list: any[]) {
+    this.isGlobalRandom = false;
     this.current = music;
     this.currentList = list;
   }

@@ -89,8 +89,7 @@ export const Page = ({
 
   useEffect(() => {
     return navigation.addListener('focus', () => {
-      console.log('set pageId', pageId);
-
+      // console.log('set pageId', pageId);
       setPage?.(pageId);
       setShouldRefreshFocus(true);
     });

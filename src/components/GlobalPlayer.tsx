@@ -3,9 +3,7 @@ import Video from 'react-native-video';
 import RNFS from 'react-native-fs';
 import throttle from 'lodash.throttle';
 
-import {getDownloadUrl} from '../api';
-import {ToastAndroid} from 'react-native';
-import axios from 'axios';
+import {getDownloadUrl, getLrc} from '../api';
 import {usePlayer} from '../hooks/useStores';
 import {observer} from 'mobx-react';
 
@@ -34,10 +32,12 @@ export default observer(() => {
   const loadLrc = async (item: any) => {
     setLyric?.('[00:00.00]歌词加载中..');
     try {
-      const lrcurl = `https://bitbucket.org/rojerchen95/faforever-lrc/raw/master/${
-        item.title
-      }.lrc?_t=${new Date().valueOf()}`;
-      const {data: lrc} = await axios.get(lrcurl);
+      // const lrcurl = `https://bitbucket.org/rojerchen95/faforever-lrc/raw/master/${
+      //   item.title
+      // }.lrc?_t=${new Date().valueOf()}`;
+      console.log('item.title', item.title);
+
+      const {data: lrc} = await getLrc(item.title);
       setLyric?.(lrc);
     } catch (error) {
       setLyric?.('[00:00.00]暂无歌词');
@@ -59,11 +59,7 @@ export default observer(() => {
 
     if (!is) {
       try {
-        ToastAndroid.showWithGravity(
-          '下载歌曲中...',
-          ToastAndroid.LONG,
-          ToastAndroid.CENTER,
-        );
+        global.alert('下载歌曲中...');
         const url = getDownloadUrl(item.id);
         const ret = RNFS.downloadFile({
           fromUrl: url,
@@ -73,11 +69,7 @@ export default observer(() => {
         await ret.promise;
       } catch (error) {
         console.log('下载失败');
-        ToastAndroid.showWithGravity(
-          '下载失败',
-          ToastAndroid.LONG,
-          ToastAndroid.CENTER,
-        );
+        global.alert('下载失败');
       }
     }
 

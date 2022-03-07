@@ -1,11 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components/native';
-import {
-  ScrollView,
-  RefreshControl,
-  useTVEventHandler,
-  ToastAndroid,
-} from 'react-native';
+import {ScrollView, RefreshControl, useTVEventHandler} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import CodePush from 'react-native-code-push';
 
@@ -21,10 +16,9 @@ import Twitch from '../components/Twitch';
 import {usePlayer} from '../hooks/useStores';
 import {observer} from 'mobx-react';
 import {useGlobal} from '../hooks/useGlobal';
-
-const alert = (msg: string) => {
-  ToastAndroid.showWithGravity(msg, ToastAndroid.LONG, ToastAndroid.CENTER);
-};
+import FmButton from '../components/FmButton';
+import MyLikeButton from '../components/MyLikeButton';
+import RankButton from '../components/RankButton';
 
 const Header = styled.View`
   margin: 15px 0px;
@@ -153,11 +147,7 @@ export default observer(() => {
       setGlobalCruteria(criteriaData);
       setRefreshing(false);
     } catch (error: any) {
-      ToastAndroid.showWithGravity(
-        error.message,
-        ToastAndroid.LONG,
-        ToastAndroid.CENTER,
-      );
+      global.alert(error.message);
       setRefreshing(false);
     }
   };
@@ -204,18 +194,26 @@ export default observer(() => {
               </Flex>
             </Focusable>
           ) : null}
-
-          <Text color="#FFFFFF" size={10} style={{marginLeft: 18}}>
-            v1.0.1
-          </Text>
         </Header>
         <Container>
+          <Flex style={{width: '100%'}} justify="space-between">
+            <FmButton />
+            <MyLikeButton />
+            {/* <RankButton /> */}
+          </Flex>
+
           <Twitch />
           <Title>
             <Text size={24}>推荐歌单</Text>
           </Title>
 
           <RecommendPlaylist cruteria={cruteria} />
+
+          <Flex justify="center" align="center">
+            <Text color="#9a9a9a" style={{marginBottom: 18}}>
+              当前版本号：v1.0.2
+            </Text>
+          </Flex>
         </Container>
       </ScrollView>
     </Page>
