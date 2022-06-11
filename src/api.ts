@@ -3,9 +3,12 @@ import axios from 'axios';
 const API = 'http://faforever.eqistu.cn/';
 
 export const getSid = () => {
-  return axios.get('/sid', {
-    baseURL: API,
-  });
+  return axios.get(
+    '/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account=cyfwlp&passwd=5267373&session=AudioStation&format=cookie',
+    {
+      baseURL: 'http://magict.cn:5000/webapi',
+    },
+  );
 };
 
 export const getCriteria = () => {

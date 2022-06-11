@@ -15,7 +15,7 @@ global.alert = msg => {
 };
 
 getSid().then(({data}) => {
-  global.sid = data.sid;
+  global.sid = data.data.sid;
 });
 
 AppRegistry.registerComponent(app.name, () => App);

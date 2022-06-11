@@ -202,7 +202,7 @@ export default observer(() => {
             {/* <RankButton /> */}
           </Flex>
 
-          <Twitch />
+          {/* <Twitch /> */}
           <Title>
             <Text size={24}>推荐歌单</Text>
           </Title>
