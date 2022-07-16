@@ -14,8 +14,12 @@ global.alert = msg => {
   ToastAndroid.showWithGravity(msg, ToastAndroid.LONG, ToastAndroid.CENTER);
 };
 
-getSid().then(({data}) => {
-  global.sid = data.data.sid;
-});
+getSid()
+  .then(({data}) => {
+    global.sid = data.data.sid;
+  })
+  .catch(() => {
+    global.alert('登录失败，可能您的网络不支持IPV6');
+  });
 
 AppRegistry.registerComponent(app.name, () => App);

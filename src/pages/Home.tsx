@@ -211,7 +211,7 @@ export default observer(() => {
 
           <Flex justify="center" align="center">
             <Text color="#9a9a9a" style={{marginBottom: 18}}>
-              当前版本号：v1.0.2
+              当前版本号：v1.0.3
             </Text>
           </Flex>
         </Container>

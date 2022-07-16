@@ -6,7 +6,8 @@ export const getSid = () => {
   return axios.get(
     '/auth.cgi?api=SYNO.API.Auth&version=3&method=login&account=cyfwlp&passwd=5267373&session=AudioStation&format=cookie',
     {
-      baseURL: 'http://magict.cn:5000/webapi',
+      // baseURL: 'http://magict.cn:5000/webapi',
+      baseURL: 'http://[2409:8a28:2405:b751::a7b]:5000/webapi',
     },
   );
 };
@@ -63,9 +64,10 @@ export const getRandom = () => {
 };
 
 export const getPicUrl = (album_name: string, album_artist_name: string) => {
-  return `http://magict.cn:5000/webapi/AudioStation/cover.cgi?api=SYNO.AudioStation.Cover&version=3&method=getcover&album_name=${album_name}&album_artist_name=${album_artist_name}&library=all&_sid=${global.sid}`;
+  // return `http://magict.cn:5000/webapi/AudioStation/cover.cgi?api=SYNO.AudioStation.Cover&version=3&method=getcover&album_name=${album_name}&album_artist_name=${album_artist_name}&library=all&_sid=${global.sid}`;
+  return `http://[2409:8a28:2405:b751::a7b]:5000/webapi/AudioStation/cover.cgi?api=SYNO.AudioStation.Cover&version=3&method=getcover&album_name=${album_name}&album_artist_name=${album_artist_name}&library=all&_sid=${global.sid}`;
 };
 
 export const getDownloadUrl = (id: string) => {
-  return `https://magict.cn:5001/webapi/AudioStation/stream.cgi?api=SYNO.AudioStation.Stream&method=stream&version=1&id=${id}&_sid=${global.sid}&ext=.mp3`;
+  return `http://[2409:8a28:2405:b751::a7b]:5000/webapi/AudioStation/stream.cgi?api=SYNO.AudioStation.Stream&method=stream&version=1&id=${id}&_sid=${global.sid}&ext=.mp3`;
 };
